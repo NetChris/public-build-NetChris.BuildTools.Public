@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PackageId>NetChris.BuildTools.Public.Sample</PackageId>
+    <Version>1.2.4-prerelease</Version>
+    <Authors>NetChris</Authors>
+    <Company>NetChris Corp.</Company>
+    <Copyright>(c) 2018 NetChris Corp.</Copyright>
+    <PackageProjectUrl>https://gitlab.com/NetChris/NetChris.BuildTools.Public/wikis/home</PackageProjectUrl>
+    <RepositoryUrl>https://gitlab.com/NetChris/NetChris.BuildTools.Public</RepositoryUrl>
+    <RepositoryType>GitLab</RepositoryType>
+    <PackageIconUrl>https://netchris.blob.core.windows.net/public/static/icons/netchris.64.png</PackageIconUrl>
+    <PackageTags>netchris dotnet-core diagnostics</PackageTags>
+    <Description>Blerg blerg.</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+</Project>
