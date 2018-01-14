@@ -1,0 +1,56 @@
+# Sample appveyor.yml starting point.
+# This version is good for a library project where you want to package it up as a NuGet package
+# Replace PROJECT_NAME with your project name to fit most NetChris project layouts.
+# See https://gitlab.com/NetChris/DotNET-Coding-Standards/wikis/.NET-Core-project-layout
+version: Build-{build}
+
+nuget:
+  account_feed: true
+
+image: Visual Studio 2017
+
+environment:
+# You can lower this to, say, "minimal" once you get your build process ironed out
+  MsBuildVerbosity: normal
+
+configuration: Release
+
+before_build:
+- ps: >-
+    dotnet restore "$env:APPVEYOR_BUILD_FOLDER\src\PROJECT_NAME\PROJECT_NAME.sln"
+
+    appveyor DownloadFile https://gitlab.com/NetChris/NetChris.BuildTools.Public/raw/master/Scripts/VersionCSPROJ/VersionCSPROJ.ps1
+
+    appveyor DownloadFile https://gitlab.com/NetChris/NetChris.BuildTools.Public/raw/master/Scripts/AppVeyor/BuildRename.ps1
+
+    .\VersionCSPROJ.ps1 -BuildNumber $env:APPVEYOR_BUILD_NUMBER -csproj "$env:APPVEYOR_BUILD_FOLDER\src\PROJECT_NAME\PROJECT_NAME\PROJECT_NAME.csproj" -commit $env:APPVEYOR_REPO_COMMIT
+
+    .\BuildRename.ps1
+
+build_script:
+- ps: >-
+    dotnet build --configuration ${env:CONFIGURATION} --verbosity ${env:MsBuildVerbosity} "${env:APPVEYOR_BUILD_FOLDER}\src\PROJECT_NAME\PROJECT_NAME.sln"
+
+test_script:
+- ps: >-
+    dotnet test "${env:APPVEYOR_BUILD_FOLDER}\src\PROJECT_NAME\PROJECT_NAME.UnitTests\PROJECT_NAME.UnitTests.csproj"
+
+after_build:
+- ps: >-
+    $env:PackFolder = "${env:APPVEYOR_BUILD_FOLDER}\pack\PROJECT_NAME\"
+
+    dotnet pack --configuration ${env:CONFIGURATION} --verbosity ${env:MsBuildVerbosity} --output "$env:PackFolder" "${env:APPVEYOR_BUILD_FOLDER}\src\PROJECT_NAME\PROJECT_NAME\PROJECT_NAME.csproj"
+
+artifacts:
+- path: '**\PROJECT_NAME.*.*.*.nupkg'
+  name: PROJECT_NAME.nupkg
+- path: VersionCSPROJ.ps1
+  name: VersionCSPROJ.ps1
+- path: BuildRename.ps1
+  name: BuildRename.ps1
+
+deploy:
+- provider: Environment
+  name: nuggetboy.nuget.org
+  on:
+    branch: master
