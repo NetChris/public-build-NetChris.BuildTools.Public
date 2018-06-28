@@ -64,7 +64,7 @@ if($prerelease)
 "Major version: $majorVersion"
 "Minor version: $minorVersion"
 "Patch version: $patchVersion"
-"Patch version (numeric part): $patchVersionNumeric"
+"Patch version (numeric part, will be replaced by build number): $patchVersionNumeric"
 "Prerelease (if any): $prerelease"
 
 $assemblyVersion = "${majorVersion}.${minorVersion}.${buildNumber}.${patchVersionNumeric}"
