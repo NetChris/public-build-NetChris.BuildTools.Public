@@ -9,6 +9,7 @@
       - $env:patchVersion (e.g. "3-alpha" if semVer is "1.2.3-alpha")
       - $env:patchVersionNumeric (e.g. "3" if semVer is "1.2.3-alpha")
     - Saves AssemblyVersion, FileVersion, and InformationalVersion
+    - Replaces the numeric part of the patch version with the build number
 #>
 
 Param
@@ -49,12 +50,22 @@ $versionParts = $version.Split("{.}")
 [int]$majorVersion = $versionParts[0]
 [int]$minorVersion = $versionParts[1]
 [string]$patchVersion = $versionParts[2]
-[int]$patchVersionNumeric = $patchVersion.Split("{-}")[0]
+$patchVersionSplit = $patchVersion.Split("{-}")
+[int]$patchVersionNumeric = $patchVersionSplit[0]
+[string]$prerelease = $patchVersionSplit[1]
+
+if($prerelease)
+{
+    $prerelease = "-$prerelease"
+}
+
+[string]$modifiedSemVer = "$majorVersion.$minorVersion.$buildNumber$prerelease"
 
 "Major version: $majorVersion"
 "Minor version: $minorVersion"
 "Patch version: $patchVersion"
 "Patch version (numeric part): $patchVersionNumeric"
+"Prerelease (if any): $prerelease"
 
 $assemblyVersion = "${majorVersion}.${minorVersion}.${buildNumber}.${patchVersionNumeric}"
 
@@ -123,5 +134,7 @@ $env:minorVersion = $minorVersion
 $env:patchVersion = $patchVersion
 $env:patchVersionNumeric = $patchVersionNumeric
 $env:paddedBuildNumber = $paddedBuildNumber
+
+$propertyGroup.Version = $modifiedSemVer
 
 $xml.Save($csprojFile.FullName)
